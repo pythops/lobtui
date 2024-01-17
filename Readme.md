@@ -1,6 +1,7 @@
 <div align="center">
   <img height="100" src="assets/logo.png"/>
   <h2> TUI for <a href="https://lobste.rs"> lobste.rs </a> website </h2>
+  <img src="https://github.com/pythops/lobtui/assets/57548585/6bf37e19-8a22-46e3-8d8a-8505c0080f06"/>
 </div>
 
 ## 🚀 Installation
