@@ -1,0 +1,23 @@
+[package]
+name = "lobtui"
+version = "0.1.0"
+authors = ["pythops <contact@pythops.com>"]
+license = "GPL-3.0"
+description = "TUI for lobste.rs website"
+edition = "2021"
+readme = "Readme.md"
+homepage = "https://github.com/pythops/lobtui"
+repository = "https://github.com/pythops/lobtui"
+
+[dependencies]
+crossterm = { version = "0.27", features = ["event-stream"] }
+futures = "0.3"
+ratatui = "0.25"
+tokio = { version = "1", features = ["full"] }
+scraper = "0.18"
+reqwest = { version = "0.11", default-features = false, features = [
+  "rustls-tls",
+] }
+
+open = "5"
+color-eyre = "0.6"
