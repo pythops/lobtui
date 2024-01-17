@@ -1,0 +1,53 @@
+---
+name: Release
+on:
+  push:
+    tags:
+      - "v*"
+jobs:
+  build:
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+    permissions:
+      contents: write
+
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          toolchain: stable
+
+      - name: Setup build env for Linux
+        if: matrix.os == 'ubuntu-latest'
+        run: |
+          sudo apt update
+          sudo apt install -y musl-tools gcc
+          rustup target add x86_64-unknown-linux-musl
+
+      - name: Build for Linux
+        if: matrix.os == 'ubuntu-latest'
+        run: |
+          cargo build --release --target=x86_64-unknown-linux-musl
+          strip target/x86_64-unknown-linux-musl/release/lobtui
+          cp target/x86_64-unknown-linux-musl/release/lobtui lobtui-x86_64-linux-musl
+
+      - name: Build for macos
+        if: matrix.os == 'macos-latest'
+        run: |
+          rustup target add aarch64-apple-darwin
+          cargo build --release --target=x86_64-apple-darwin
+          cargo build --release --target=aarch64-apple-darwin
+          cp target/x86_64-apple-darwin/release/lobtui lobtui-x86_64-macos
+          cp target/aarch64-apple-darwin/release/lobtui lobtui-aarch64-macos
+
+      - name: Release
+        uses: softprops/action-gh-release@v1
+        with:
+          body: |
+            [Release.md](${{ github.server_url }}/${{ github.repository }}/blob/master/Release.md)
+          files: "lobtui*"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
