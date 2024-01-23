@@ -18,6 +18,14 @@ You can install `lobtui` from [crates.io](https://crates.io/crates/lobtui)
 cargo install lobtui
 ```
 
+## 🐧 Arch Linux
+
+You can install [`lobtui`](https://aur.archlinux.org/packages/lobtui) from the AUR using your favorite [AUR helper](https://wiki.archlinux.org/title/AUR_helpers). For example:
+
+```shell
+paru -S lobtui
+```
+
 ### ⚒️ Build from source
 
 Run the following command:
