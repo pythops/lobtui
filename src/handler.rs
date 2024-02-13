@@ -23,6 +23,16 @@ pub async fn handle_key_events(
             }
         }
 
+        KeyCode::Char('G') => {
+            app.cursor = app.stories.len() - 1;
+        }
+
+        KeyCode::Char('g') => {
+            if app.previous_key == KeyCode::Char('g') {
+                app.cursor = 0;
+            }
+        }
+
         KeyCode::Char('j') | KeyCode::Down => {
             if app.cursor < app.stories.len() - 1 {
                 app.cursor = app.cursor.saturating_add(1);
@@ -73,5 +83,8 @@ pub async fn handle_key_events(
 
         _ => {}
     }
+
+    app.previous_key = key_event.code;
+
     Ok(())
 }

@@ -1,4 +1,5 @@
 use color_eyre::eyre::Result;
+use crossterm::event::KeyCode;
 use std::error;
 
 use scraper::{error::SelectorErrorKind, Html, Selector};
@@ -10,6 +11,7 @@ pub type AppResult<T> = Result<T, Box<dyn error::Error>>;
 #[derive(Debug)]
 pub struct App {
     pub running: bool,
+    pub previous_key: KeyCode,
     pub stories: Vec<Story>,
     pub cursor: usize,
     pub page: usize,
@@ -36,6 +38,7 @@ impl App {
 
         Ok(Self {
             running: true,
+            previous_key: KeyCode::Null,
             stories,
             cursor: 0,
             page: 1,

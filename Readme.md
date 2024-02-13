@@ -44,21 +44,23 @@ strip target/release/lobtui
 
 This will produce an executable file at `target/release/lobtui` that you can copy to a directory in your `$PATH`.
 
-
 ## 🪄 Usage
 
-`j` or `Down` : scroll down
+`j` or `Down` : scroll down.
 
-`k` or `Up`: scroll up
+`k` or `Up`: scroll up.
 
-`n`: next page
+`gg`: go to the top of the page.
 
-`p`: previous page
+`G`: go the bottom of the page.
 
-`r`: reload the current page
+`n`: next page.
 
-`o`: open the  highlighted story in the browser
+`p`: previous page.
 
+`r`: reload the current page.
+
+`o`: open the highlighted story in the browser.
 
 ## ⚖️ License
 
