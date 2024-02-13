@@ -1,5 +1,6 @@
 use color_eyre::eyre::Result;
 use crossterm::event::KeyCode;
+use reqwest::Client;
 use std::error;
 
 use scraper::{error::SelectorErrorKind, Html, Selector};
@@ -11,6 +12,7 @@ pub type AppResult<T> = Result<T, Box<dyn error::Error>>;
 #[derive(Debug)]
 pub struct App {
     pub running: bool,
+    pub client: Client,
     pub previous_key: KeyCode,
     pub stories: Vec<Story>,
     pub cursor: usize,
@@ -32,12 +34,25 @@ pub struct Story {
 
 impl App {
     pub async fn new() -> Result<Self> {
-        let response = reqwest::get("https://lobste.rs/").await?.text().await?;
+        static APP_USER_AGENT: &str =
+            concat!(env!("CARGO_PKG_NAME"), "/", env!("CARGO_PKG_VERSION"),);
+
+        let client = reqwest::Client::builder()
+            .user_agent(APP_USER_AGENT)
+            .build()?;
+
+        let response = client
+            .get("https://lobste.rs/")
+            .send()
+            .await?
+            .text()
+            .await?;
 
         let stories = App::parse(response).unwrap();
 
         Ok(Self {
             running: true,
+            client,
             previous_key: KeyCode::Null,
             stories,
             cursor: 0,
@@ -123,7 +138,10 @@ impl App {
     }
 
     pub async fn refresh(&mut self) -> Result<(), Box<dyn std::error::Error>> {
-        let response = reqwest::get(format!("https://lobste.rs/page/{}", self.page))
+        let response = self
+            .client
+            .get(format!("https://lobste.rs/page/{}", self.page))
+            .send()
             .await?
             .text()
             .await?;
