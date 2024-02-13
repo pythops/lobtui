@@ -48,6 +48,7 @@ pub async fn handle_key_events(
                 sender.send(Event::Notification(notif)).unwrap();
                 app.page = app.page.saturating_sub(1);
             }
+            app.cursor = 0;
         }
 
         KeyCode::Char('p') => {
@@ -59,6 +60,7 @@ pub async fn handle_key_events(
                     sender.send(Event::Notification(notif)).unwrap();
                     app.page = app.page.saturating_add(1);
                 }
+                app.cursor = 0;
             }
         }
 
