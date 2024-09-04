@@ -1,4 +1,4 @@
-use color_eyre::{eyre::Result, owo_colors::OwoColorize};
+use color_eyre::eyre::Result;
 use crossterm::event::KeyCode;
 use ratatui::{style::Stylize, text::Text, widgets::ListState};
 use reqwest::Client;
