@@ -1,3 +1,13 @@
+## v0.3 - TBA
+
+### Updated
+
+- bump ratatui version
+
+### Improved
+
+- Better scrolling
+
 ## v0.2 - 20/02/2024
 
 ### Added
