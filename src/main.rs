@@ -8,11 +8,9 @@ use std::io;
 
 #[tokio::main]
 async fn main() -> AppResult<()> {
-    color_eyre::install()?;
-
     let mut app = App::new().await?;
 
-    let backend = CrosstermBackend::new(io::stderr());
+    let backend = CrosstermBackend::new(io::stdout());
     let terminal = Terminal::new(backend)?;
     let events = EventHandler::new(1_000);
 
@@ -26,11 +24,10 @@ async fn main() -> AppResult<()> {
             Event::Key(key_event) => {
                 handle_key_events(key_event, &mut app, tui.events.sender.clone()).await?
             }
-            Event::Mouse(_) => {}
-            Event::Resize(_, _) => {}
             Event::Notification(notification) => {
                 app.notifications.push(notification);
             }
+            _ => {}
         }
     }
 
