@@ -1,5 +1,6 @@
 use color_eyre::eyre::Result;
 use crossterm::event::KeyCode;
+use ratatui::widgets::ListState;
 use reqwest::Client;
 use std::error;
 
@@ -15,10 +16,10 @@ pub struct App {
     pub client: Client,
     pub previous_key: KeyCode,
     pub stories: Vec<Story>,
-    pub cursor: usize,
     pub page: usize,
-    pub scroll: usize,
     pub notifications: Vec<Notification>,
+    pub state: ListState,
+    pub window_height: usize,
 }
 
 #[derive(Debug)]
@@ -50,15 +51,21 @@ impl App {
 
         let stories = App::parse(response).unwrap();
 
+        let mut state = ListState::default();
+
+        if !stories.is_empty() {
+            state.select(Some(0));
+        }
+
         Ok(Self {
             running: true,
             client,
             previous_key: KeyCode::Null,
             stories,
-            cursor: 0,
             page: 1,
-            scroll: 0,
             notifications: Vec::new(),
+            state,
+            window_height: 0,
         })
     }
 
@@ -155,7 +162,7 @@ impl App {
     }
 
     pub fn open(&mut self) -> Result<()> {
-        let story = &self.stories[self.cursor];
+        let story = &self.stories[self.state.selected().unwrap()];
         open::that(&story.link)?;
         Ok(())
     }

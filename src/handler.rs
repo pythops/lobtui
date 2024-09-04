@@ -24,23 +24,51 @@ pub async fn handle_key_events(
         }
 
         KeyCode::Char('G') => {
-            app.cursor = app.stories.len() - 1;
+            *app.state.offset_mut() = (app.stories.len() - 1).saturating_sub(app.window_height);
+            app.state.select(Some(app.stories.len() - 1));
         }
 
         KeyCode::Char('g') => {
             if app.previous_key == KeyCode::Char('g') {
-                app.cursor = 0;
+                *app.state.offset_mut() = 0;
+                app.state.select(Some(0));
             }
         }
 
         KeyCode::Char('j') | KeyCode::Down => {
-            if app.cursor < app.stories.len() - 1 {
-                app.cursor = app.cursor.saturating_add(1);
-            }
+            let i = match app.state.selected() {
+                Some(i) => {
+                    if i < app.window_height {
+                        i + 1
+                    } else if i == app.window_height - 1 {
+                        *app.state.offset_mut() += 1;
+                        i + 1
+                    } else {
+                        i
+                    }
+                }
+                None => 0,
+            };
+
+            app.state.select(Some(i));
         }
 
         KeyCode::Char('k') | KeyCode::Up => {
-            app.cursor = app.cursor.saturating_sub(1);
+            let i = match app.state.selected() {
+                Some(i) => {
+                    if i > app.state.offset() {
+                        i - 1
+                    } else if i == app.state.offset() && app.state.offset() > 0 {
+                        *app.state.offset_mut() -= 1;
+                        i - 1
+                    } else {
+                        0
+                    }
+                }
+                None => 0,
+            };
+
+            app.state.select(Some(i));
         }
 
         KeyCode::Char('r') => {
@@ -58,7 +86,7 @@ pub async fn handle_key_events(
                 sender.send(Event::Notification(notif)).unwrap();
                 app.page = app.page.saturating_sub(1);
             }
-            app.cursor = 0;
+            app.state.select(Some(0));
         }
 
         KeyCode::Char('p') => {
@@ -70,7 +98,7 @@ pub async fn handle_key_events(
                     sender.send(Event::Notification(notif)).unwrap();
                     app.page = app.page.saturating_add(1);
                 }
-                app.cursor = 0;
+                app.state.select(Some(0));
             }
         }
 

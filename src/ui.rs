@@ -1,5 +1,3 @@
-use std::usize;
-
 use ratatui::{
     layout::{Alignment, Constraint, Direction, Layout, Rect},
     style::{Color, Modifier, Style},
@@ -41,7 +39,7 @@ pub fn render(app: &mut App, frame: &mut Frame) {
         let chunks = Layout::default()
             .direction(Direction::Vertical)
             .constraints([Constraint::Min(1), Constraint::Length(3)].as_ref())
-            .split(frame.size());
+            .split(frame.area());
         (chunks[0], chunks[1])
     };
 
@@ -51,11 +49,14 @@ pub fn render(app: &mut App, frame: &mut Frame) {
         .wrap(Wrap { trim: true });
 
     // Body
+
+    // 2 because two lines for an item list
+    app.window_height = body_block.height as usize / 2;
+
     let items: Vec<ListItem> = app
         .stories
         .iter()
-        .enumerate()
-        .map(|(i, story)| {
+        .map(|story| {
             let first_line = vec![
                 Span::styled(" ▲ ", Style::default().fg(Color::Gray)),
                 Span::styled(
@@ -96,28 +97,16 @@ pub fn render(app: &mut App, frame: &mut Frame) {
                 Line::from(""),
             ]);
 
-            if app.cursor == i {
-                return item.style(Style::default().bg(Color::DarkGray));
-            }
-
             item
         })
         .collect();
 
-    let mut scroll = 0;
-
-    let body_block_height = body_block.height as usize - 3;
-    let items_length = items.len() * 3;
-
-    if body_block_height < items_length && app.cursor > body_block_height / 3 {
-        scroll = app.cursor - body_block_height / 3;
-    }
-
-    let list = List::new(items.as_slice()[scroll..].to_vec())
+    let list = List::new(items.to_vec())
+        .highlight_style(Style::new().bg(Color::DarkGray))
         .block(Block::default())
-        .style(Style::default().fg(Color::White));
+        .style(Style::default());
 
-    frame.render_widget(list, body_block);
+    frame.render_stateful_widget(list, body_block, &mut app.state);
     frame.render_widget(footer, footer_block);
 
     // Notifs
@@ -157,7 +146,7 @@ pub fn render(app: &mut App, frame: &mut Frame) {
             height
         };
 
-        let area = notification_rect(i as u16, notification_height, frame.size());
+        let area = notification_rect(i as u16, notification_height, frame.area());
 
         frame.render_widget(Clear, area);
         frame.render_widget(block, area);
