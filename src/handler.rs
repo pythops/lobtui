@@ -72,18 +72,20 @@ pub async fn handle_key_events(
         }
 
         KeyCode::Char('r') => {
-            let notif = match app.refresh().await {
-                Ok(_) => Notification::new("Page refreshed".to_string(), NotificationLevel::Info),
-                Err(e) => Notification::new(e.to_string(), NotificationLevel::Error),
+            match app.refresh().await {
+                Ok(_) => Notification::send(
+                    "Page refreshed".to_string(),
+                    NotificationLevel::Info,
+                    sender,
+                )?,
+                Err(e) => Notification::send(e.to_string(), NotificationLevel::Error, sender)?,
             };
-            sender.send(Event::Notification(notif)).unwrap();
         }
 
         KeyCode::Char('n') => {
             app.page = app.page.saturating_add(1);
             if let Err(e) = app.refresh().await {
-                let notif = Notification::new(e.to_string(), NotificationLevel::Error);
-                sender.send(Event::Notification(notif)).unwrap();
+                Notification::send(e.to_string(), NotificationLevel::Error, sender)?;
                 app.page = app.page.saturating_sub(1);
             }
             app.state.select(Some(0));
@@ -94,8 +96,7 @@ pub async fn handle_key_events(
                 app.page = app.page.saturating_sub(1);
 
                 if let Err(e) = app.refresh().await {
-                    let notif = Notification::new(e.to_string(), NotificationLevel::Error);
-                    sender.send(Event::Notification(notif)).unwrap();
+                    Notification::send(e.to_string(), NotificationLevel::Error, sender)?;
                     app.page = app.page.saturating_add(1);
                 }
                 app.state.select(Some(0));
@@ -104,8 +105,7 @@ pub async fn handle_key_events(
 
         KeyCode::Char('o') => {
             if let Err(e) = app.open() {
-                let notif = Notification::new(e.to_string(), NotificationLevel::Error);
-                sender.send(Event::Notification(notif)).unwrap();
+                Notification::send(e.to_string(), NotificationLevel::Error, sender)?;
             }
         }
 

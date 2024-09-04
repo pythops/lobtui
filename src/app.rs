@@ -1,12 +1,20 @@
-use color_eyre::eyre::Result;
+use color_eyre::{eyre::Result, owo_colors::OwoColorize};
 use crossterm::event::KeyCode;
-use ratatui::widgets::ListState;
+use ratatui::{style::Stylize, text::Text, widgets::ListState};
 use reqwest::Client;
 use std::error;
 
 use scraper::{error::SelectorErrorKind, Html, Selector};
 
 use crate::notifications::Notification;
+
+use ratatui::{
+    layout::{Alignment, Constraint, Direction, Layout},
+    style::{Color, Modifier, Style},
+    text::{Line, Span},
+    widgets::{Block, List, ListItem, Paragraph, Wrap},
+    Frame,
+};
 
 pub type AppResult<T> = Result<T, Box<dyn error::Error>>;
 
@@ -142,6 +150,86 @@ impl App {
         }
 
         Ok(stories)
+    }
+
+    pub fn render(&mut self, frame: &mut Frame) {
+        let (body_block, footer_block) = {
+            let chunks = Layout::default()
+                .direction(Direction::Vertical)
+                .constraints([Constraint::Min(1), Constraint::Length(3)].as_ref())
+                .split(frame.area());
+            (chunks[0], chunks[1])
+        };
+
+        // footer
+        let footer = Paragraph::new(Text::from(format!("Page {}", self.page)).bold())
+            .alignment(Alignment::Center)
+            .wrap(Wrap { trim: true });
+
+        // Body
+
+        // 2 because two lines for an item list
+        self.window_height = body_block.height as usize / 2;
+
+        let items: Vec<ListItem> = self
+            .stories
+            .iter()
+            .enumerate()
+            .map(|(index, story)| {
+                let first_line = vec![
+                    Span::styled(
+                        format!("{}. ▲ ", index + 1),
+                        Style::default().fg(Color::Gray),
+                    ),
+                    Span::styled(
+                        story.title.clone(),
+                        Style::default().add_modifier(Modifier::BOLD).blue(),
+                    ),
+                ];
+
+                let second_line = vec![
+                    Span::styled(
+                        format!("     {}", story.votes),
+                        Style::default().fg(Color::Gray),
+                    ),
+                    Span::raw(" votes. By "),
+                    Span::styled(
+                        story.author.clone(),
+                        Style::default()
+                            .fg(Color::Gray)
+                            .add_modifier(Modifier::ITALIC),
+                    ),
+                    Span::raw(". "),
+                    Span::styled(
+                        story.comment_count.clone(),
+                        Style::default().fg(Color::Gray),
+                    ),
+                    Span::raw(" comments. Tags: "),
+                    Span::styled(
+                        story.tags.join(", "),
+                        Style::default()
+                            .fg(Color::Yellow)
+                            .add_modifier(Modifier::ITALIC),
+                    ),
+                ];
+
+                let item = ListItem::new(vec![
+                    Line::from(first_line),
+                    Line::from(second_line).gray(),
+                    Line::from(""),
+                ]);
+
+                item
+            })
+            .collect();
+
+        let list = List::new(items.to_vec())
+            .highlight_style(Style::new().bg(Color::DarkGray))
+            .block(Block::default())
+            .style(Style::default());
+
+        frame.render_stateful_widget(list, body_block, &mut self.state);
+        frame.render_widget(footer, footer_block);
     }
 
     pub async fn refresh(&mut self) -> Result<(), Box<dyn std::error::Error>> {
