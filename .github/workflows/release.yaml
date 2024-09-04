@@ -3,51 +3,38 @@ name: Release
 on:
   push:
     tags:
-      - "v*"
+      - "*"
 jobs:
   build:
-    strategy:
-      matrix:
-        os: [ubuntu-latest, macos-latest]
     permissions:
       contents: write
-
-    runs-on: ${{ matrix.os }}
-
+    continue-on-error: false
+    runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: dtolnay/rust-toolchain@stable
-        with:
-          toolchain: stable
+      - name: Checkout
+        uses: actions/checkout@v4
 
-      - name: Setup build env for Linux
-        if: matrix.os == 'ubuntu-latest'
+      - uses: cargo-bins/cargo-binstall@main
+
+      - name: Install the dependencies
         run: |
           sudo apt update
-          sudo apt install -y musl-tools gcc
-          rustup target add x86_64-unknown-linux-musl
+          sudo apt install -y podman binutils-aarch64-linux-gnu musl-tools
+          cargo binstall -y cross
 
-      - name: Build for Linux
-        if: matrix.os == 'ubuntu-latest'
+      - name: Build for arm64 musl
         run: |
-          cargo build --release --target=x86_64-unknown-linux-musl
-          strip target/x86_64-unknown-linux-musl/release/lobtui
-          cp target/x86_64-unknown-linux-musl/release/lobtui lobtui-x86_64-linux-musl
+          CROSS_CONTAINER_ENGINE=podman cross build --target aarch64-unknown-linux-musl --release
+          cp target/aarch64-unknown-linux-musl/release/lobtui lobtui-aarch64-unknown-linux-musl
 
-      - name: Build for macos
-        if: matrix.os == 'macos-latest'
+      - name: Build for x86_64 musl
         run: |
-          rustup target add aarch64-apple-darwin
-          cargo build --release --target=x86_64-apple-darwin
-          cargo build --release --target=aarch64-apple-darwin
-          cp target/x86_64-apple-darwin/release/lobtui lobtui-x86_64-macos
-          cp target/aarch64-apple-darwin/release/lobtui lobtui-aarch64-macos
+          CROSS_CONTAINER_ENGINE=podman cross build --target x86_64-unknown-linux-musl --release
+          cp target/x86_64-unknown-linux-musl/release/lobtui lobtui-x86_64-unknown-linux-musl
 
-      - name: Release
-        uses: softprops/action-gh-release@v1
+      - name: Upload Binary
+        uses: softprops/action-gh-release@v2
         with:
-          body: |
-            [Release.md](${{ github.server_url }}/${{ github.repository }}/blob/master/Release.md)
           files: "lobtui*"
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          body: |
+            [Release.md](${{ github.server_url }}/${{ github.repository }}/blob/main/Release.md)
