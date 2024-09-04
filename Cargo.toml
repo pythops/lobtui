@@ -21,6 +21,7 @@ reqwest = { version = "0.12", default-features = false, features = [
 
 open = "5"
 color-eyre = "0.6"
+clap = { version = "4", features = ["derive", "cargo"] }
 
 [profile.release]
 lto = "fat"

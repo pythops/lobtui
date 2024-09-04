@@ -1,3 +1,4 @@
+use clap::{crate_description, crate_version, Command};
 use lobtui::app::{App, AppResult};
 use lobtui::event::{Event, EventHandler};
 use lobtui::handler::handle_key_events;
@@ -8,6 +9,11 @@ use std::io;
 
 #[tokio::main]
 async fn main() -> AppResult<()> {
+    Command::new("lobtui")
+        .about(crate_description!())
+        .version(crate_version!())
+        .get_matches();
+
     let mut app = App::new().await?;
 
     let backend = CrosstermBackend::new(io::stdout());
