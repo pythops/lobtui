@@ -28,7 +28,7 @@ paru -S lobtui
 
 ## 🚩 NetBSD
 
-You can install [`lobtui`](https://https://pkgsrc.se/editors/lobtui) from the official repositories.
+You can install [`lobtui`](https://pkgsrc.se/news/lobtui) from the official repositories.
 
 ```shell
 pkgin install lobtui
