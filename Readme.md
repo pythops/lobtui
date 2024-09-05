@@ -26,6 +26,14 @@ You can install [`lobtui`](https://aur.archlinux.org/packages/lobtui) from the A
 paru -S lobtui
 ```
 
+## 🚩 NetBSD
+
+You cab install [`lobtui`](https://https://pkgsrc.se/editors/lobtui) from the official repositories.
+
+```shell
+pkgin install lobtui
+```
+
 ### ⚒️ Build from source
 
 Run the following command:
