@@ -12,13 +12,12 @@ repository = "https://github.com/pythops/lobtui"
 [dependencies]
 crossterm = { version = "0.28", features = ["event-stream"] }
 futures = "0.3"
-ratatui = "0.28"
+ratatui = "0.29"
 tokio = { version = "1", features = ["full"] }
-scraper = "0.20"
+scraper = "0.22"
 reqwest = { version = "0.12", default-features = false, features = [
   "rustls-tls",
 ] }
-
 open = "5"
 color-eyre = "0.6"
 clap = { version = "4", features = ["derive", "cargo"] }
