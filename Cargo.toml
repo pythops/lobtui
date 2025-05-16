@@ -14,9 +14,9 @@ crossterm = { version = "0.28", features = ["event-stream"] }
 futures = "0.3"
 ratatui = "0.29"
 tokio = { version = "1", features = ["full"] }
-scraper = "0.22"
+scraper = "0.23"
 reqwest = { version = "0.12", default-features = false, features = [
-  "rustls-tls",
+    "rustls-tls",
 ] }
 open = "5"
 color-eyre = "0.6"
