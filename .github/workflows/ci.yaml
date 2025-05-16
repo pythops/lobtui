@@ -21,4 +21,4 @@ jobs:
           cargo fmt --all -- --check
 
       - name: Debug builds
-        run: cargo build 
+        run: cargo build
