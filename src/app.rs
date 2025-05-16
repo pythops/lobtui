@@ -213,13 +213,11 @@ impl App {
                     ),
                 ];
 
-                let item = ListItem::new(vec![
+                ListItem::new(vec![
                     Line::from(first_line),
                     Line::from(second_line).gray(),
                     Line::from(""),
-                ]);
-
-                item
+                ])
             })
             .collect();
 
