@@ -4,16 +4,16 @@ use ratatui::{style::Stylize, text::Text, widgets::ListState};
 use reqwest::Client;
 use std::error;
 
-use scraper::{error::SelectorErrorKind, Html, Selector};
+use scraper::{Html, Selector, error::SelectorErrorKind};
 
 use crate::notifications::Notification;
 
 use ratatui::{
+    Frame,
     layout::{Alignment, Constraint, Direction, Layout},
     style::{Color, Modifier, Style},
     text::{Line, Span},
     widgets::{Block, List, ListItem, Paragraph, Wrap},
-    Frame,
 };
 
 pub type AppResult<T> = Result<T, Box<dyn error::Error>>;
@@ -213,13 +213,11 @@ impl App {
                     ),
                 ];
 
-                let item = ListItem::new(vec![
+                ListItem::new(vec![
                     Line::from(first_line),
                     Line::from(second_line).gray(),
                     Line::from(""),
-                ]);
-
-                item
+                ])
             })
             .collect();
 

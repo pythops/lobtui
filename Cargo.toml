@@ -1,10 +1,10 @@
 [package]
 name = "lobtui"
-version = "0.3.0"
+version = "0.3.1"
 authors = ["Badr Badri <contact@pythops.com>"]
 license = "GPL-3.0"
 description = "TUI for lobste.rs website"
-edition = "2021"
+edition = "2024"
 readme = "Readme.md"
 homepage = "https://github.com/pythops/lobtui"
 repository = "https://github.com/pythops/lobtui"

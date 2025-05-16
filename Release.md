@@ -1,3 +1,7 @@
+## v0.3.1 - 2025-05-16
+
+- Fix broken vote selector
+
 ## v0.3 - 2024-09-04
 
 - Bump ratatui version
