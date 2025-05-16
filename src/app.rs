@@ -85,7 +85,7 @@ impl App {
         let title_selector = Selector::parse(r#"a[class="u-url"]"#)?;
         let tags_selector = Selector::parse(r#"span[class="tags"]"#)?;
         let author_selector = Selector::parse("a.u-author")?;
-        let votes_selector = Selector::parse("div.score")?;
+        let votes_selector = Selector::parse("a.upvoter")?;
         let comments_selector = Selector::parse(r#"span[class="comments_label"]"#)?;
 
         for story in html.select(&story_selector) {
