@@ -923,7 +923,7 @@ checksum = "241eaef5fd12c88705a01fc1066c48c4b36e0dd4377dcdc7ec3942cea7a69956"
 
 [[package]]
 name = "lobtui"
-version = "0.3.0"
+version = "0.3.1"
 dependencies = [
  "clap",
  "color-eyre",
