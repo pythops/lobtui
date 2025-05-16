@@ -1,10 +1,10 @@
-use clap::{crate_description, crate_version, Command};
+use clap::{Command, crate_description, crate_version};
 use lobtui::app::{App, AppResult};
 use lobtui::event::{Event, EventHandler};
 use lobtui::handler::handle_key_events;
 use lobtui::tui::Tui;
-use ratatui::backend::CrosstermBackend;
 use ratatui::Terminal;
+use ratatui::backend::CrosstermBackend;
 use std::io;
 
 #[tokio::main]
